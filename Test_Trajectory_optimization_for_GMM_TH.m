@@ -8,7 +8,7 @@ close all; clear all; clc;
 fs = 1000; % sampling frequency
 Ts = 1/fs; % sampling time
 EndTime = 10;
-NofMultipleSign = 30;
+NofMultipleSign = 50;
 NofParam = 4;
 
 % Parameter init
@@ -25,7 +25,7 @@ for i = 1:NofMultipleSign
 end
 %%
 % NofMean = 2;
-means = [2,5];
+means = [2,10,5,3,20];
 
 delta_init = zeros(NofMultipleSign*NofParam,1);
 for i = 1:NofMultipleSign
@@ -47,7 +47,7 @@ lb = [];
 ub = [];
 nonlcon = [];
 % options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',300000, 'ConstraintTolerance',1e-20);
-options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',300000);
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',100000);
 delta_calc = fmincon(f_c, delta_init,A,b,Aeq,beq,lb,ub,nonlcon,options);
 % %%
 % % q_opt = zeros(N,1);
@@ -79,6 +79,7 @@ grid on
 %%
 [idx, Center] = kmeans(q_opt,length(means));
 %%
+
 %% 
 % % delta = [a1]
 % fs = 1000; % sampling frequency

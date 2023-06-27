@@ -41,10 +41,14 @@ function cost = Test_Kmeans_cost_function(delta, N, means, Ts, NofMultipleSign)
 %     end
 
     %Cost func 04
-    for j = 1:2:N
-        cost_temp_1 = norm(q_0(j)-means(1))^2;   
-        cost_temp_2 = norm(q_0(j+1)-means(2))^2;  
+    for i = 1:length(means)
+        cost_temp(i) = 0;
     end
-    cost = cost_temp_1 + cost_temp_2;
+
+    for j = 1:(N/2)
+        cost_temp(i) = cost_temp(i) + norm(q_0(j)-means(i))^2;   
+        cost_temp_2 = cost_temp_2 + norm(q_0(j+(N/2))-means(2))^2;  
+    end
+    cost = (cost_temp_1 + cost_temp_2)/N;
 
 end    
