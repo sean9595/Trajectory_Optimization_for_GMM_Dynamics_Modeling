@@ -15,6 +15,7 @@ function cost = Test_Kmeans_cost_function(delta, N, means, Ts, NofMultipleSign)
             q_0(t) = q_0(t) + a_cost(i)*sin(omega_cost(i)*t*Ts)-b_cost(i)*cos(omega_cost(i)*t*Ts)+bias_cost(i);
         end
     end
+
     %Cost func 01
 %     q_0_mean = mean(q_1);
 %     cost = 0;
@@ -41,7 +42,7 @@ function cost = Test_Kmeans_cost_function(delta, N, means, Ts, NofMultipleSign)
 %         cost = cost + cost_temp;
 %     end
 
-    %Cost func 04
+    %Cost func 04: Done
     for i = 1:NofMeans
         cost_temp_eachmean(i) = 0;
         for j = 1:(N/NofMeans)
@@ -53,5 +54,35 @@ function cost = Test_Kmeans_cost_function(delta, N, means, Ts, NofMultipleSign)
     for i = 1:NofMeans
         cost_temp = cost_temp + cost_temp_eachmean(i);
     end
-    cost = cost_temp/NofMeans;
+    cost = cost_temp/N;
+
+    %Cost func 05: Testing
+%     [idx, Center] = kmeans(q_0,length(means));
+%     q_mean_kmeans = Center;
+%     for i = 1:NofMeans
+%         cost_temp_eachmean(i) = 0;
+%         for j = 1:(N/NofMeans)
+%             cost_temp_eachmean(i) = cost_temp_eachmean(i) + norm(q_mean_kmeans(i)-means(i))^2;
+%         end
+%     end
+% 
+%     cost_temp = 0;
+%     for i = 1:NofMeans
+%         cost_temp = cost_temp + cost_temp_eachmean(i);
+%     end
+%     cost = cost_temp/NofMeans;
+
+%     %Cost func 06  
+%     for i = 1:NofMeans
+%         cost_temp_eachmean(i) = 0;
+%         for j = 1:N
+%             cost_temp_eachmean(i) = cost_temp_eachmean(i) + norm(q_0(j)-means(i))^2;
+%         end
+%     end
+% 
+%     cost_temp = 0;
+%     for i = 1:NofMeans
+%         cost_temp = cost_temp + cost_temp_eachmean(i);
+%     end
+%     cost = cost_temp/(NofMeans*N);
 end    
