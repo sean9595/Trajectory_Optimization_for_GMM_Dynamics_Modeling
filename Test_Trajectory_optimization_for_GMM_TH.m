@@ -6,9 +6,9 @@ close all; clear all; clc;
 %% 
 % delta = [a1]
 fs = 1000; % sampling frequency
-Ts = 1/fs; % sampling time
+Ts = 1/fs; % sampling time 
 EndTime = 10;
-NofMultipleSign = 80;
+NofMultipleSign = 10;
 NofParam = 4;
 
 % Parameter init
@@ -18,14 +18,31 @@ omega = zeros(NofMultipleSign,1);
 bias = zeros(NofMultipleSign,1);
 
 for i = 1:NofMultipleSign
-   a(i) = 0.1;
-   b(i) = 0.1;
-   omega(i) = 1;
-   bias(i) = 0;
+   a(i) = rand;
+   b(i) = rand;
+   omega(i) = rand;
+   bias(i) = rand;
 end
 %%
+subplot(4,1,1)
+plot(a);
+grid on
+
+subplot(4,1,2)
+plot(b);
+grid on
+
+subplot(4,1,3)
+plot(omega);
+grid on
+
+subplot(4,1,4)
+plot(bias);
+grid on
+%%
 % NofMean = 2;
-means = [-1,1,-1,1,-1];
+% means = [-1,1,-1,1,-1];
+means = [-2,10];
 
 delta_init = zeros(NofMultipleSign*NofParam,1);
 for i = 1:NofMultipleSign
@@ -40,7 +57,7 @@ N = length(time_);
 %% trajectory optimization
 f_c = @(delta) Test_Kmeans_cost_function(delta, N, means,Ts, NofMultipleSign);
 A = [];
-b = [];
+b_con = [];
 Aeq = [];
 beq = [];
 lb = [];
@@ -48,7 +65,7 @@ ub = [];
 nonlcon = [];
 % options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',300000, 'ConstraintTolerance',1e-20);
 options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',3000000);
-delta_calc = fmincon(f_c, delta_init,A,b,Aeq,beq,lb,ub,nonlcon,options);
+delta_calc = fmincon(f_c, delta_init,A,b_con,Aeq,beq,lb,ub,nonlcon,options);
 % %%
 % % q_opt = zeros(N,1);
 % %     for t = 1:N
@@ -73,13 +90,50 @@ for t = 1:N
     end
 end
 %%
-figure(1)
+figure(2)
 plot(q_opt);
 grid on
 %%
 [idx, Center] = kmeans(q_opt,length(means));
-%%
-
+% %% Iteration 01
+% % Take Obtained parameter into initial value for next iteration
+% for i = 1:NofMultipleSign
+%     delta_init(1+4*(i-1)) = delta_calc(1+4*(i-1));
+%     delta_init(2+4*(i-1)) = delta_calc(2+4*(i-1));
+%     delta_init(3+4*(i-1)) = delta_calc(3+4*(i-1));
+%     delta_init(4+4*(i-1)) = delta_calc(4+4*(i-1));
+% end
+% %% trajectory optimization
+% f_c = @(delta) Test_Kmeans_cost_function(delta, N, means,Ts, NofMultipleSign);
+% A = [];
+% b = [];
+% Aeq = [];
+% beq = [];
+% lb = [];
+% ub = [];
+% nonlcon = [];
+% % options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',300000, 'ConstraintTolerance',1e-20);
+% options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 'MaxFunctionEvaluations',3000000);
+% delta_calc = fmincon(f_c, delta_init,A,b,Aeq,beq,lb,ub,nonlcon,options);
+% %%
+% q_opt_iter02 = zeros(N, 1);
+% for i=1:NofMultipleSign
+%     a_opt_02(i) = delta_calc(1+4*(i-1));
+%     b_opt_02(i) = delta_calc(2+4*(i-1));
+%     omega_opt_02(i) = delta_calc(3+4*(i-1));
+%     bias_opt_02(i) = delta_calc(4+4*(i-1));
+% end
+% for t = 1:N
+%     for i = 1:NofMultipleSign
+%         q_opt_iter02(t) = q_opt_iter02(t) + a_opt_02(i)*sin(omega_opt_02(i)*t*Ts)-b_opt_02(i)*cos(omega_opt_02(i)*t*Ts)+bias_opt_02(i);
+%     end
+% end
+% %%
+% figure(2)
+% plot(q_opt_iter02);
+% grid on
+% %%
+% [idx, Center] = kmeans(q_opt_iter02,length(means));
 %% 
 % % delta = [a1]
 % fs = 1000; % sampling frequency

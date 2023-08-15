@@ -7,13 +7,17 @@ clc; clear;
 addpath('m_fcts/'); 
 %%
 % 데이터 로드
-load('C:\Users\User\OneDrive - 대구경북과학기술원\바탕 화면\KTH_workspace\SIMULATION\Trajectory_optimization\Opt_data\230705\Costfunc04_LS05_qopt.mat','q_opt')
+load('D:\data_archive\Trajectory_opt_data\GMM_test\230813_10EA_Cost01_m1p1.mat','q_opt')
 q_opt_temp = zeros(length(q_opt)/10,1);
 for i = 1:length(q_opt)/10
     q_opt_temp(i) = q_opt(10*i);
 end
 %%
+figure(1)
 plot(q_opt);
+grid on
+figure(2)
+plot(q_opt_temp);
 grid on
 %%
 q_opt_fin = cat(1,q_opt_temp,q_opt_temp);
@@ -21,7 +25,9 @@ for i = 1:8
     q_opt_fin = cat(1,q_opt_fin,q_opt_temp);
 end
 %%
+figure(3)
 plot(q_opt_fin);
+grid on
 %%
 t_con = 0:0.001:9.999;
 q_opt_tw = cat(2, t_con', q_opt_fin);
@@ -30,12 +36,12 @@ t_con = 0:0.001:9.999;
 q_opt_tw = cat(2, t_con', q_opt);
 %%
 % 데이터 로드 02
-simout=sim('Test_simple_sine.slx');
+simout=sim('C:\Users\User\OneDrive - 대구경북과학기술원\바탕 화면\KTH_workspace\SIMULATION\Dynamics_Modeling\GMM\Test_simple_sine.slx');
 theta=simout.input{1}.Values.Data;
 output=simout.output{1}.Values.Data;
 %%
 % 데이터 로드 03
-simout=sim('Test_simple_sine_opt.slx');
+simout=sim('C:\Users\User\OneDrive - 대구경북과학기술원\바탕 화면\KTH_workspace\SIMULATION\Dynamics_Modeling\GMM\Test_simple_sine_opt.slx');
 theta_opt=simout.input{1}.Values.Data;
 output_opt=simout.output{1}.Values.Data;
 %%
@@ -212,7 +218,8 @@ trq_in_J01_val = trq_in_val(1000:10001,1);
 %     DataIn_vel(i+1) = -(DataIn_vel(i)*(pi*sampling_time*f_cut - 1) - 2*pi*f_cut*DataIn_ang(i+1) + 2*pi*f_cut*DataIn_ang(i))/(pi*sampling_time*f_cut + 1);
 %     DataIn_acc(i+1) = -(DataIn_acc(i)*(pi*sampling_time*f_cut - 1) - 2*pi*f_cut*DataIn_vel(i+1) + 2*pi*f_cut*DataIn_vel(i))/(pi*sampling_time*f_cut + 1);
 % end
-DataIn_temp = cat(1, angle_out_J01_val', acc_out_J01_val');
+% DataIn_temp = cat(1, angle_out_J01_val', acc_out_J01_val');
+DataIn_temp = cat(1, theta_opt');
 DataIn = gpuArray(DataIn_temp);
 % DataIn = cat(1, angle_out_fin', acc_out_fin');
 %%
@@ -227,8 +234,8 @@ nbVarOut = 1;
 % in, out은 1 x N, 1 x M 배열
 % in = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 % out = [15,16,17,18,19,20,21];
-in = [1,2];
-out = [3];
+in = [1];
+out = [2];
 
 % 대각성분에 더해주는 작은 양의 스칼라 값
 % Optional 한 값으로, 0으로 두어도 됨
@@ -261,6 +268,13 @@ for t=1:nbData
 	expSigma(:,:,t) = expSigma(:,:,t) - expData(:,t) * expData(:,t)' + eye(nbVarOut) * model.params_diagRegFact; 
     t
 end
+%%
+figure(4)
+hold on;
+plot(DataIn(1,:),expData,'.','markersize',3,'color',[1.0 .0 .0]);
+plot(DataIn(1,:),output_opt,'.','markersize',3,'color',[0.0 1.0 .0]);
+plotGMM(model.Mu, model.Sigma, [.8 0 0],.5); 
+grid on
 %%
 figure(4)
 hold on;
