@@ -1,27 +1,29 @@
-function cost = Test_Kmeans_cost_function(delta, N, means, Ts, NofMultipleSign)
+function cost = Test_Kmeans_cost_function_Reduced_Param_DesignateFreq(delta, N, means, Ts, NofMultipleSign,omega)
     %Param designate
     for i=1:NofMultipleSign
-        a_cost(i) = delta(1+4*(i-1));
-        b_cost(i) = delta(2+4*(i-1));
-        omega_cost(i) = delta(3+4*(i-1));
-        bias_cost(i) = delta(4+4*(i-1));
+        a_cost(i) = delta(1+2*(i-1));
+        b_cost(i) = delta(2+2*(i-1));
+%         omega_cost(i) = delta(3+3*(i-1));
     end
-    
+    omega_cost = omega;
+    bias_cost = delta(2*NofMultipleSign+1);
+
     NofMeans = length(means);
     q_0 = zeros(N,1);
 
     for t = 1:N
         for i = 1:NofMultipleSign
-            q_0(t) = q_0(t) + a_cost(i)*sin(omega_cost(i)*t*Ts)-b_cost(i)*cos(omega_cost(i)*t*Ts)+bias_cost(i);
+            q_0(t) = q_0(t) + a_cost(i)*sin(omega_cost(i)*t*Ts)-b_cost(i)*cos(omega_cost(i)*t*Ts);
         end
     end
+    q_0 = q_0 + bias_cost;
 
     %Cost func 01
-%     q_0_mean = mean(q_0);
-%     cost = 0;
-%     for i = 1:length(means)
-%         cost = cost + norm(q_0_mean-means(i), "fro")^2;   
-%     end
+    q_0_mean = mean(q_0);
+    cost = 0;
+    for i = 1:length(means)
+        cost = cost + norm(q_0_mean-means(i), "fro")^2;   
+    end
 
     %Cost func 02
 %     [idx, Center] = kmeans(q_0,length(means));

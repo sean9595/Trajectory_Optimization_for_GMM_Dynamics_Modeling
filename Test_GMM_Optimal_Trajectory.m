@@ -7,7 +7,7 @@ clc; clear;
 addpath('m_fcts/'); 
 %%
 % 데이터 로드
-load('D:\data_archive\Trajectory_opt_data\GMM_test\230813_10EA_Cost01_m1p1.mat','q_opt')
+load('D:\data_archive\Trajectory_opt_data\GMM_test\230821_5EA_Cost01_m2_p2_0_err0_05.mat','q_opt')
 q_opt_temp = zeros(length(q_opt)/10,1);
 for i = 1:length(q_opt)/10
     q_opt_temp(i) = q_opt(10*i);
@@ -83,7 +83,7 @@ hold off
 % 2) GMM parameter initialization
 %
 
-model.nbStates = 2;
+model.nbStates = 3;
 % model_noisy.nbStates = 15;
 
 % % Prior(i): i번째 State (Gaussian distribution) 별 weight.
@@ -269,7 +269,7 @@ for t=1:nbData
     t
 end
 %%
-figure(4)
+figure(5)
 hold on;
 plot(DataIn(1,:),expData,'.','markersize',3,'color',[1.0 .0 .0]);
 plot(DataIn(1,:),output_opt,'.','markersize',3,'color',[0.0 1.0 .0]);
